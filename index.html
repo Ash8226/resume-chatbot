@@ -13,7 +13,32 @@
     <div id="resume-chatbot"></div>
 
     <script type="text/babel">
-        // Previous knowledgeBase remains the same
+        const knowledgeBase = {
+            contact: {
+                keywords: ['contact', 'email', 'phone', 'reach'],
+                response: 'You can contact Aminurashid at: Email: aminurashid.ahmad@gmail.com'
+            },
+            languages: {
+                keywords: ['language', 'speak', 'linguistic'],
+                response: 'Aminurashid is fluent in English, Malay, and has intermediate proficiency in Bahasa Indonesia.'
+            },
+            current: {
+                keywords: ['current', 'now', 'present', 'recent'],
+                response: 'Currently, Aminurashid is a Freelance Business Development Consultant for a boutique legal firm in Singapore, where he provides advice on lead generation and has built a customized CRM. He is also running a successful Mexican restaurant venture, Mami\'s Tamales.'
+            },
+            experience: {
+                keywords: ['experience', 'work', 'career', 'background'],
+                response: 'Aminurashid has diverse experience including:\n1. Business Development Consultant (2024-Present)\n2. Entrepreneur - Mami\'s Tamales (2023-Present)\n3. APAC Sales at Cloud9 Technologies (2022-2023)\n4. Senior Client Relations Manager at FIS Global (2017-2019)\n5. Relationship Manager at Saxo Capital Markets (2014-2017)'
+            },
+            education: {
+                keywords: ['education', 'degree', 'university', 'study', 'qualification'],
+                response: 'Education:\n- Master of Financial Analysis/International Business from La Trobe University (2012-2014)\n- Bachelor of Science with Honors in Physical Education and Sports Science from Nanyang Technological University (2004-2008)'
+            },
+            skills: {
+                keywords: ['skills', 'capabilities', 'abilities', 'technical', 'competencies'],
+                response: 'Key skills include:\n- 15 years of trading experience in stocks, FX, options, and futures\n- Business development and client relationship management\n- Technical skills in SQL, Power BI, Python, and Machine Learning\n- App development using low-code platforms\n- Social media management and marketing'
+            },
+        };
 
         function Message({ content, role }) {
             return (
@@ -58,7 +83,112 @@
             );
         }
 
-        // Rest of the App component remains the same...
+        function App() {
+            const [messages, setMessages] = React.useState([
+                { role: 'bot', content: "Hi! I'm Aminurashid's resume chatbot. How can I help you learn about his experience and background?" }
+            ]);
+            const [input, setInput] = React.useState('');
+            const [isTyping, setIsTyping] = React.useState(false);
+
+            const findAnswer = (question) => {
+                const q = question.toLowerCase();
+                let bestMatch = null;
+                let highestScore = 0;
+
+                Object.entries(knowledgeBase).forEach(([topic, data]) => {
+                    data.keywords.forEach(keyword => {
+                        if (q.includes(keyword.toLowerCase())) {
+                            const score = keyword.length;
+                            if (score > highestScore) {
+                                highestScore = score;
+                                bestMatch = data.response;
+                            }
+                        }
+                    });
+                });
+
+                return bestMatch || "I apologize, I don't have specific information about that. You can ask about Aminurashid's experience, education, skills, current role, or contact information.";
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!input.trim()) return;
+
+                const newMessages = [...messages, { role: 'user', content: input }];
+                setMessages(newMessages);
+                setInput('');
+                setIsTyping(true);
+
+                setTimeout(() => {
+                    const answer = findAnswer(input);
+                    setMessages([...newMessages, { role: 'bot', content: answer }]);
+                    setIsTyping(false);
+                }, 1000);
+            };
+
+            return (
+                <div style={{
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                    padding: '20px',
+                    fontFamily: 'Arial, sans-serif'
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '20px',
+                        marginBottom: '20px',
+                        maxHeight: '500px',
+                        overflowY: 'auto',
+                        padding: '10px'
+                    }}>
+                        {messages.map((message, index) => (
+                            <Message key={index} {...message} />
+                        ))}
+                        {isTyping && (
+                            <Message role="bot" content="typing..." />
+                        )}
+                    </div>
+                    <form onSubmit={handleSubmit} style={{
+                        display: 'flex',
+                        gap: '10px',
+                        position: 'sticky',
+                        bottom: 0,
+                        backgroundColor: 'white',
+                        padding: '10px 0'
+                    }}>
+                        <input
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Ask about Aminurashid's experience..."
+                            style={{
+                                flex: 1,
+                                padding: '12px',
+                                borderRadius: '5px',
+                                border: '1px solid #ddd',
+                                fontSize: '14px'
+                            }}
+                        />
+                        <button 
+                            type="submit" 
+                            style={{
+                                padding: '12px 24px',
+                                backgroundColor: '#2563eb',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontWeight: '500'
+                            }}
+                        >
+                            Send
+                        </button>
+                    </form>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('resume-chatbot'));
     </script>
 </body>
 </html>
