@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aminurashid Ahmad - Resume Chatbot</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+</head>
+<body>
+    <div id="resume-chatbot"></div>
+
+    <script type="text/babel">
+        // Previous knowledgeBase code remains the same, so I'm keeping it brief here
+        const knowledgeBase = {
+            'contact': {
+                keywords: ['contact', 'email', 'phone', 'reach'],
+                response: 'You can contact Aminurashid at: Email: aminurashid.ahmad@gmail.com, Mobile: +65 91820458'
+            },
+            // ... rest of the knowledge base
+        };
+
+        const ResumeChatbot = () => {
+            const [messages, setMessages] = React.useState([
+                { role: 'bot', content: "Hi! I'm Aminurashid's resume chatbot. How can I help you learn about his experience and background?" }
+            ]);
+            const [input, setInput] = React.useState('');
+            const [isTyping, setIsTyping] = React.useState(false);
+
+            const findAnswer = (question) => {
+                // Previous findAnswer logic remains the same
+                const q = question.toLowerCase();
+                let bestMatch = null;
+                let highestScore = 0;
+
+                Object.entries(knowledgeBase).forEach(([topic, data]) => {
+                    data.keywords.forEach(keyword => {
+                        if (q.includes(keyword.toLowerCase())) {
+                            const score = keyword.length;
+                            if (score > highestScore) {
+                                highestScore = score;
+                                bestMatch = data.response;
+                            }
+                        }
+                    });
+                });
+
+                return bestMatch || "I apologize, I don't have specific information about that. You can ask about Aminurashid's experience, education, skills, current role, or contact information. What would you like to know?";
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!input.trim()) return;
+
+                const newMessages = [...messages, { role: 'user', content: input }];
+                setMessages(newMessages);
+                setInput('');
+                setIsTyping(true);
+
+                setTimeout(() => {
+                    const answer = findAnswer(input);
+                    setMessages([...newMessages, { role: 'bot', content: answer }]);
+                    setIsTyping(false);
+                }, 1000);
+            };
+
+            return (
+                <div className="chatbot-container">
+                    <div className="header">
+                        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMTA1PDNLS0s0R0pGO0dKTVFNVk1fXmVlZHBxcHduY2NjXWRwcGX/2wBDARUXFyAeIBwgHGBALSQtZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWX/wAARCAD6APoDASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAUGAQMEAgf/xAA6EAACAQIDBAgEBAUFAQAAAAAAAQIDBAURITESQVFhBhMicYGRobEUMkLBI1LR8BUzYnLhNIKSovGy/8QAGQEBAAMBAQAAAAAAAAAAAAAAAAECAwQF/8QAIxEBAQACAgICAgMBAAAAAAAAAAECEQMhEjEiQTJRBBNhcf/aAAwDAQACEQMRAD8A+4gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGurWp0Y7VScYLi3kB6BH1MXtIaRnKo+5ZepynilxL5VTiu7N+5aY2q3KJwFS+MuPzUE+9M8/xyo/kt4+Mn+heYVX+yLcCr08Yr0853FOUeCWTJChidpXyjKfVzf0z09eBeY2K+UScPMJxnFSjJSi9U1qj0QkAAAAAAAAAAAAAAAAAAAAAAAAGABF4hiULVOnTynWf9i73xI272rqW1WfGX4ce7f7EbKcpycpNyk9W3vNcMNd1jllvsm3KTcm23vbyPB6B0YxkqNrKOVOrP57VHJfmXBm+nLaPgtgNsEt4XlvGrSks90o74vijUaU1mjPKbmlpduoGIyUkmnk1uZ7KNAAAaLq1o3VOVOtBTi/VcmR1HDIWefVylKk3nsvfHufInAm42K3GVEbN3YPKNaEc/wAy0f6EzQrU7inGpSkpRfE8XNvC5t50qizT3PenyZD4fKdtdSt6r0f19z5m8vic+U8a6ABk0AAAAAAAAAAAAAAAAAAAA13FWNChUqy+WEXJmw4MafwVz3L3LY+0ZekDWqyq1J1Jv5pScn4nmL4GDzNnO6DYDIBLZslgNR2Nz3RbXjl/kliBwX/Uw7pP3JjM482Pl06OO7xDIAKLgAAA13FCncU3TqxzT9U+KNgC2k9RH2NerYXEqFVvLdLhJcUTBH4rZ/E0c4L8SnnKPPmvEnsPulcUFJ6Tj2Zrn+prjl5Tx+2WU8fkzAAlQAAAAAAAAAAAAAAAAAGm8/01b+yRuNd7/pq39kiZ7RfSpgBnm7sAAMgACQwe6p0Kko1JKPWNavcsiZVSD+WUX3NMp5uoXE6DTpzcXwzNc+LyveXa/Hy6uq7weLitCjTlOpJRiuJWri7r1/nqSa4LRehqMJhOL9r3P8S2JvQgaOIXFH5amc48J6+vE2xxe5X8uD74tfoYXCx0Y547TqafFEVQxWhUyVT8KXPVej/UkYyUkmnmno0zO42erG0yl3HSBk1XNzRt47VWai+HF9yItu+kW6ScJKSzi1mmQd7h0qMnUoLOk9Wv6f0N93idG2zitqo1uW7xNWE4hC8pudPOMoZbUXv1/dxrjb49s8pL2mwAVWAAAAAAAAAAAAAAAAAABpvf9NW/skbjXe/6at/ZImekX0qYBk83doAAADIAyAyAyWQGQG6yvK1pLOnLs/mj8rN1/idW6jGLgo019K4keDO4Y27q0zlmogDdcW9W3ls1YOL48H3M0mFmr07JZelv6M1M7acOE4+sSSKbYX1a0llTl2fyx3f4JuhiVC4yjJ9XN/TNaev7yM8sLG2OcqdABVcAAAAAAAAAAAAAA03v+mrf2SNxrvf8ATVv7JEz0i+lTGtkBnm7sAAAZBXen2NTwzDYwt5uF1XTUJLVQXFrm+C9y39J8chg2Hyqxadc/hUE/qf5n/StX6cT47cXFW4rTq1ZynUm3KUm823xbOng4/K7vpy8vJ4zU9vde4q3NWVWvUnUqSespSbbZrAO2TThAAGQGR7t7itb1FUo1JU5rip5P9THUrThOM6c5QlF5qUW00/A6aV7dUYqNO5qxityck0vDUblHaC14nfTpqMru4cVom5t5eehpqVqlV5zqTm+M5N+5gES69A7LG72zjlGo6sV9NTtepOUMZtLiKVWHUz/qWcfVaepWxmTljMvauOVx9PtYOf4qn8Nb/Gz+Xqa/5b4o6DxtmAAQAAAAAAAAAAabz/TVv7JG413v+mrf2SJnpF9KmAGebuwAAGQPh3T3Gvj8arQpy/Atk6dPhJ/NL119EfRen/SH+G2v8PtZ/j3EfxJJ6wi/p73w9eB8dO3g45J5X25ubPd8Z/oAB2OQAH2zopb0aOEW7hThGcoKU5KKTU3q8/HQ4ukGF0LnNqnCnWX1wST8VvIno1ic7CtGjOTdtUeaz3Qb4dxbTh5Ll/LuH8uzg4Z/V459IBprRbXNPXmjYZyOJ1IGQEoABr3Lo3if8QtUpt9bDsz595KFKwK8+Fvowk+xV7EvHc/b1LqePyY+OVj1ePLyx2AA560AAAAAAAAAAGm9/wBNW/skbjXe/wCmrf2SJnpF9KmAGebu39AACRptK9ShcU6tN5Tg1JHpnl7gfI+mnSGWNX7VNv4OjnGkuL/NLvf2RX4QlOSjFOUpNJJLVvkTWO4NWwi8dGecqUu1Sqfmj+q4og6c5U5xnCThOLTjJPJprenn0Y4zGajnyyttqQB2YVg13i1dU7aGUV/MqST2YLm/su82utKb0jgWLD+h+I3sE5UlQpv6asp7Ofct/oWyx6G2VBp3E53Elv2sqa8lq/MreTGe1p/Hzy+nz0yXbEOhd5aRlUtJfE01q1GOVRLw0fiVmUXFtNNNaNPc0b45TKbjDLDLG6saS0dGMQbTtZvT+Yv/AK/z6lXM05ypzjOEnGcXmmuKK54TPHVThncc5Y+ngr2C4l8TTVGs/wAaK1/qXP8AfEsBwZY3G6r0MbMpuAAKrAAAAAAAAAAA03n+mrf2SNxrvf8ATVv7JEz0i+lTADPN3YDk6QYtSwmwncVM5Tf4dKL3zf23s6yudOqLqYU6qWqpzUn3PP7ZF8JvKbVzy8cbVHxXpZf38nGVX4ak/ppN5+MnqyKnjN/Jt/F1s3/Vl7GM8s1xLZhHQy5u4RqXs3b023lGK2qjXguPeejqYzp53yyv2hrW3rXVeFGhTlUqTeUYxWbZfcB6H0rVRr37jXq6NUt1NeP1S89OZP4PgVphVLZoxzqtfinLWUv07jsOXk5bl1PT0ODgmHyl7YjFRSSSSSySW4yAc7sAABqqUadaEoVIRnCSylGSzTXiQOIdFrG7TlRj8NVe+ktI/wBr+3oWEF8c7j6UzwmU1Yr2DYJb4VGfVuU6k8ttzzei3JaEqAa227
