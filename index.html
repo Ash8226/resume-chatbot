@@ -22,7 +22,7 @@
             const knowledgeBase = {
                 'contact': {
                     keywords: ['contact', 'email', 'phone', 'reach'],
-                    response: 'You can contact Aminurashid at: Email: aminurashid.ahmad@gmail.com'
+                    response: 'You can contact Aminurashid at: Email: aminurashid.ahmad@gmail.com, Mobile: +65 91820458'
                 },
                 'languages': {
                     keywords: ['language', 'speak', 'linguistic'],
@@ -47,14 +47,6 @@
                 'skills': {
                     keywords: ['skills', 'capabilities', 'abilities', 'technical'],
                     response: 'Key skills include:\n- 15 years of trading experience in stocks, FX, options, and futures\n- Business development and client relationship management\n- Technical skills in SQL, Power BI, Python, and Machine Learning\n- App development using low-code platforms\n- Social media management and marketing'
-                },
-                'trading': {
-                    keywords: ['trading', 'finance', 'stocks', 'market'],
-                    response: 'Aminurashid has 15 years of experience in trading stocks and derivatives, including FX, Options, and Futures. He has worked at firms like Asia Management Fund, FIS Global, and Saxo Capital Markets in trading and client-facing roles.'
-                },
-                'courses': {
-                    keywords: ['courses', 'certifications', 'training'],
-                    response: 'Recent courses and certifications:\n- Certificate for Family Office Advisors (Wealth Management Institute, 2021)\n- Technical training in SQL, Power BI, Python, and Machine Learning Models (NTUC Learning Hub/Xaltius, 2021)'
                 },
                 'jokes': {
                     keywords: ['joke', 'funny', 'humor', 'laugh'],
@@ -100,18 +92,18 @@
                 if (q.includes('wisdom') || q.includes('advice') || q.includes('quote')) {
                     return knowledgeBase.wisdom.response();
                 }
-
+                
                 let bestMatch = null;
                 let highestScore = 0;
 
                 Object.entries(knowledgeBase).forEach(([topic, data]) => {
-                    if (Array.isArray(data.keywords)) {
+                    if (data.keywords) {
                         data.keywords.forEach(keyword => {
                             if (q.includes(keyword.toLowerCase())) {
                                 const score = keyword.length;
                                 if (score > highestScore) {
                                     highestScore = score;
-                                    bestMatch = typeof data.response === 'function' ? data.response() : data.response;
+                                    bestMatch = data.response;
                                 }
                             }
                         });
@@ -141,18 +133,41 @@
                 <div className="chatbot-container">
                     <div className="messages-container">
                         {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`message ${message.role === 'user' ? 'user-message' : 'bot-message'}`}
-                            >
-                                {message.content.split('\n').map((line, i) => (
-                                    <div key={i}>{line}</div>
-                                ))}
+                            <div key={index} className="message-row">
+                                {message.role === 'bot' ? (
+                                    <div className="bot-message-container">
+                                        <img 
+                                            src="https://raw.githubusercontent.com/Ash8226/resume-chatbot/69d3bdde46b93cd38d0b7dac9e11a4d4ff7389cc/avatar.png"
+                                            alt="Bot Avatar"
+                                            className="bot-avatar"
+                                        />
+                                        <div className="bot-message message">
+                                            {message.content.split('\n').map((line, i) => (
+                                                <div key={i}>{line}</div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="user-message message">
+                                        {message.content.split('\n').map((line, i) => (
+                                            <div key={i}>{line}</div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         ))}
                         {isTyping && (
-                            <div className="bot-message">
-                                typing...
+                            <div className="message-row">
+                                <div className="bot-message-container">
+                                    <img 
+                                        src="https://raw.githubusercontent.com/Ash8226/resume-chatbot/69d3bdde46b93cd38d0b7dac9e11a4d4ff7389cc/avatar.png"
+                                        alt="Bot Avatar"
+                                        className="bot-avatar"
+                                    />
+                                    <div className="bot-message message">
+                                        typing...
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -206,8 +221,28 @@
             background-color: #f8f9fa;
         }
 
-        .message {
+        .message-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .bot-message-container {
+            display: flex;
+            align-items: flex-start;
             max-width: 80%;
+        }
+
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .message {
             padding: 12px;
             border-radius: 8px;
             word-wrap: break-word;
@@ -218,18 +253,14 @@
             background-color: #2563eb;
             color: white;
             align-self: flex-end;
+            margin-left: auto;
+            max-width: 80%;
         }
 
         .bot-message {
-            content: '';
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-image: url('https://raw.githubusercontent.com/Ash8226/resume-chatbot/69d3bdde46b93cd38d0b7dac9e11a4d4ff7389cc/avatar.png');
-            background-size: cover;
-            position: absolute;
-            left: -40px;
-            top: 0;
+            background-color: white;
+            color: black;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .input-form {
